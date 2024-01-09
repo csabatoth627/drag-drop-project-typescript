@@ -243,13 +243,25 @@ class ProjectList
       this.type.toUpperCase() + " PROJECTS";
   }
 
-  dragOverHandler(event: DragEvent): void {}
+  @autobind
+  dragOverHandler(_: DragEvent): void {
+    const listEl = this.element.querySelector("ul")!;
+    listEl.classList.add("droppable");
+  }
 
-  dragLeaveHandler(event: DragEvent): void {}
+  @autobind
+  dragLeaveHandler(_: DragEvent): void {
+    const listEl = this.element.querySelector("ul")!;
+    listEl.classList.remove("droppable");
+  }
 
-  dropHandler(event: DragEvent): void {}
-  
+  dropHandler(_: DragEvent): void {}
+
   configure() {
+    this.element.addEventListener("dragover", this.dragOverHandler);
+    this.element.addEventListener("dragleave", this.dragLeaveHandler);
+    this.element.addEventListener("drop", this.dropHandler);
+
     projectState.addListener((projects: Project[]) => {
       const relevantProjects = projects.filter((prj) => {
         if (this.type === "active") {
