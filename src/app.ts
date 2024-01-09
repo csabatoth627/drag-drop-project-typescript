@@ -168,14 +168,17 @@ abstract class Component<T extends HTMLElement, U extends HTMLElement> {
   abstract renderContent(): void;
 }
 //ProjectItem Class
-class ProjectItem extends Component<HTMLUListElement, HTMLLIElement> {
+class ProjectItem
+  extends Component<HTMLUListElement, HTMLLIElement>
+  implements Draggable
+{
   private project: Project;
 
-  get persons (){
-    if(this.project.people === 1){
-      return '1 person'
+  get persons() {
+    if (this.project.people === 1) {
+      return "1 person";
     } else {
-      return `${this.project.people} persons`
+      return `${this.project.people} persons`;
     }
   }
 
@@ -187,15 +190,27 @@ class ProjectItem extends Component<HTMLUListElement, HTMLLIElement> {
     this.renderContent();
   }
 
-  configure() {}
-
-  renderContent() {
-    this.element.querySelector('h2')!.textContent = this.project.title;
-    this.element.querySelector('h3')!.textContent = `${this.persons} assigned`
-    this.element.querySelector('p')!.textContent = this.project.description;
+  @autobind
+  dragStartHandler(event: DragEvent): void {
+    console.log(event);
+    
   }
 
+  dragEndHandler(_: DragEvent): void {
+    console.log('dragEnd');
+    
+  }
 
+  configure() {
+    this.element.addEventListener('dragstart', this.dragStartHandler)
+    this.element.addEventListener('dragend', this.dragEndHandler)
+  }
+
+  renderContent() {
+    this.element.querySelector("h2")!.textContent = this.project.title;
+    this.element.querySelector("h3")!.textContent = `${this.persons} assigned`;
+    this.element.querySelector("p")!.textContent = this.project.description;
+  }
 }
 
 //ProjectList Class
@@ -216,7 +231,7 @@ class ProjectList extends Component<HTMLDivElement, HTMLElement> {
     )! as HTMLUListElement;
     listEl.innerHTML = "";
     for (const prjItem of this.assignedProjects) {
-      new ProjectItem(this.element.querySelector('ul')!.id,prjItem)
+      new ProjectItem(this.element.querySelector("ul")!.id, prjItem);
     }
   }
 
